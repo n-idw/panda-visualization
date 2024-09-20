@@ -38,7 +38,7 @@ def create_rotated_cross(
     ax.add_patch(cross)
 
 
-def plotSTT(useGrayScale=False, alpha=1):
+def plot_stt(useGrayScale=False, alpha=1):
 
     # import the STT geometry data
     sttGeo = pd.read_csv(

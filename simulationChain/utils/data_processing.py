@@ -65,7 +65,10 @@ def get_particle_tex_name(
     pdg_db: str = "sqlite:////home/nikin105/mlProject/data/pdg/pdgall-2024-v0.1.0.sqlite",
 ) -> str:
     """
-    Get the latex representation of a particle name based on its PDG ID.
+    Get the latex representation of a particle name based on its PDG ID. The PDG MC numbering
+    scheme can be found here: https://pdg.lbl.gov/2024/reviews/rpp2024-rev-monte-carlo-numbering.pdf.
+    "Nucleus" represents all nuclei. Nuclei have a 10-digit PDG ID and the numbering scheme is listed
+    under point 16. of the document.
 
     Args:
         pdg_id (int): PDG ID of the particle.
@@ -94,13 +97,18 @@ def get_particle_tex_name(
         "mu+": r"\mu^+",
         "mu-": r"\mu^-",
         "n": r"n",
+        "K+": r"K^+",
+        "K-": r"K^-",
     }
 
     # Check if the particle ID is 8888 belonging to the ppbar system
     if pdg_id == 88888:
         return r"p\bar{p}"
+    # Check if the particle ID is 10 digits long, which represents a nucleus
+    elif len(str(pdg_id)) == 10:
+        return "nucleus"
+    # Else return the latex representation of the particle name
     else:
-        # Return the latex representation of the particle name
         return particle_tex_names[pdg_api.get_particle_by_mcid(str(pdg_id)).name]
 
 
