@@ -61,9 +61,9 @@ def plotSTT(useGrayScale=False, alpha=1):
     pipeColors = sns.color_palette("pastel")
 
     if useGrayScale:
-        posSkewedColor = "gray"
-        negSkewedColor = "darkgray"
-        straightColor = "lightgray"
+        posSkewedColor = pipeColors[7]
+        negSkewedColor = pipeColors[7]
+        straightColor = pipeColors[7]
     else:
         posSkewedColor = pipeColors[3]
         negSkewedColor = pipeColors[0]
@@ -72,6 +72,7 @@ def plotSTT(useGrayScale=False, alpha=1):
     # Create a figure and axis
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 10))
 
+    # Plot the positive skewed tubes
     ax.scatter(
         posSkewedTubes["x"],
         posSkewedTubes["y"],
@@ -80,6 +81,7 @@ def plotSTT(useGrayScale=False, alpha=1):
         s=20,
         alpha=alpha,
     )
+    # Plot the negative skewed tubes
     ax.scatter(
         negSkewedTubes["x"],
         negSkewedTubes["y"],
@@ -88,6 +90,7 @@ def plotSTT(useGrayScale=False, alpha=1):
         s=20,
         alpha=alpha,
     )
+    # Plot the straight tubes
     ax.scatter(
         straightTubes["x"],
         straightTubes["y"],
@@ -97,11 +100,10 @@ def plotSTT(useGrayScale=False, alpha=1):
         alpha=alpha,
     )
 
-    # plotting params
+    # Format the axes
     ax.set_xlabel("x [cm]")
     ax.set_ylabel("y [cm]")
     ax.set_aspect("equal")
-
     sns.despine(fig=fig, ax=ax, offset=10, trim=True)
 
     fig.tight_layout()

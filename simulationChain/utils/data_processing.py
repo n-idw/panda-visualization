@@ -60,7 +60,7 @@ def make_track_dict(
     return track_dict
 
 
-def get_particle_tex_names(
+def get_particle_tex_name(
     pdg_id: int,
     pdg_db: str = "sqlite:////home/nikin105/mlProject/data/pdg/pdgall-2024-v0.1.0.sqlite",
 ) -> str:
@@ -119,13 +119,13 @@ def get_all_mother_ids(
     """
 
     # Create an array combining the mother and second mother IDs
-    all_mother_ids = np.zeros(len(mother_ids))
+    all_mother_ids = np.zeros(len(mother_ids), dtype=int)
 
     # Iterate over all particles
     for particle_id in range(len(mother_ids)):
         # Get the mother ID and second mother ID of the current MC point
-        mother_id = int(mother_ids[particle_id])
-        second_mother_id = int(second_mother_ids[particle_id])
+        mother_id = mother_ids[particle_id]
+        second_mother_id = second_mother_ids[particle_id]
         # When the mother ID is -1, set the second mother ID as the mother ID
         if mother_id == -1:
             all_mother_ids[particle_id] = second_mother_id
@@ -162,19 +162,19 @@ def get_process_ids(
 
     # Create an array for the mc ids of the process leading to the current
     # particle
-    process_mc_ids = np.array([pdg_ids[particle_id]])
-    curr_process_ids = np.array([process_ids[particle_id]])
+    process_mc_ids = np.array([], dtype=int)
+    curr_process_ids = np.array([], dtype=int)
 
     # Iterate over the mother ids until the primary particle is reached (mother
     # id = -1)
-    while particle_id != 0:
-        # Set the current particle index to the mother id of the previous
-        # particle
-        particle_id = int(mother_ids[particle_id])
+    while particle_id != -1:
         # Insert the current particle's pdg id at the beginning of the process
         # mc id array
         process_mc_ids = np.insert(process_mc_ids, 0, [pdg_ids[particle_id]])
         curr_process_ids = np.insert(curr_process_ids, 0, [process_ids[particle_id]])
+        # Set the current particle index to the mother id of the previous
+        # particle
+        particle_id = int(mother_ids[particle_id])
 
     # Return the array with all mc ids of the process
     return process_mc_ids, curr_process_ids
@@ -188,17 +188,20 @@ def get_process_tex_str(process_mc_ids: np.array, max_depth: int = np.inf) -> st
     # Iterate over all particles in the process
     for particle_index in range(len(process_mc_ids)):
         # Get the latex representation of the particle name
-        particle_tex_name = get_particle_tex_names(process_mc_ids[particle_index])
-        # Set the name of the first particle without an arrow in front
+        particle_tex_name = get_particle_tex_name(process_mc_ids[particle_index])
+        # Set the name of the first particle with an $ to activate
+        # math mode in latex instead of an arrow in front
         if particle_index == 0:
-            process_tex_str = particle_tex_name
+            process_tex_str = r"$" + particle_tex_name
         # Add an arrow in front of all other particles
         else:
             process_tex_str = process_tex_str + r" \to " + particle_tex_name
         # Increase the current depth by one
         current_depth += 1
-        # Break the loop if the maximum depth is reached
-        if current_depth > max_depth:
+        # Break the loop if the maximum depth or the last particle
+        # is reached and append a closing $ to end math mode
+        if current_depth > max_depth or particle_index == len(process_mc_ids) - 1:
+            process_tex_str = process_tex_str + r"$"
             break
 
     # Return the latex formatted string of the process
