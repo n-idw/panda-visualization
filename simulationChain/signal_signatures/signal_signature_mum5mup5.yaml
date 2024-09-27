@@ -1,0 +1,10 @@
+# PDG IDs: https://pdg.lbl.gov/2024/mcdata/mass_width_2024.txt 
+# VMC physics process codes: https://root.cern/doc/v610/TMCProcess_8h_source.html
+
+particle_ids:
+    - [13] # mu-
+    - [-13] # anti-mu+
+
+# Only primary particle emission as they are generated with Box generators
+process_codes:
+    - [0]

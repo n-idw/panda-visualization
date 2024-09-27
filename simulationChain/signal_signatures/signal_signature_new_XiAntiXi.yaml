@@ -1,0 +1,20 @@
+# PDG IDs: https://pdg.lbl.gov/2024/mcdata/mass_width_2024.txt 
+# VMC physics process codes: https://root.cern/doc/v610/TMCProcess_8h_source.html
+
+particle_ids:
+    - [88888, 3312]  # ppbar -> Xi-
+    - [88888, -3312]  # ppbar -> anti-Xi+
+    - [88888, 3312, -211]  # ppbar -> Xi- -> pi-
+    - [88888, -3312, 211]  # ppbar -> anti-Xi+ -> pi+
+    - [88888, 3312, 3122]  # ppbar -> Xi- -> Lambda0
+    - [88888, -3312, -3122]  # ppbar -> anti-Xi+ -> anti-Lambda0
+    - [88888, 3312, 3122, -211]  # ppbar -> Xi- -> Lambda0 -> pi-
+    - [88888, -3312, -3122, 211]  # ppbar -> anti-Xi+ -> anti-Lambda0 -> pi+
+    - [88888, 3312, 3122, 2212]  # ppbar -> Xi- -> Lambda0 -> p
+    - [88888, -3312, -3122, -2212]  # ppbar -> anti-Xi+ -> anti-Lambda0 -> anti-p
+
+# Only primary particle emission for ppbar -> Xi anti-Xi, and all further processes are particle decays
+process_codes:
+    - [0, 0]
+    - [0, 0, 4]
+    - [0, 0, 4, 4]

@@ -1,5 +1,6 @@
 import numpy as np
 import uproot as up
+import logging
 import pdg
 
 
@@ -86,8 +87,10 @@ def get_particle_tex_name(
     particle_tex_names = {
         "p": r"p",
         "pbar": r"\bar{p}",
+        "gamma": r"\gamma",
         "pi+": r"\pi^+",
         "pi-": r"\pi^-",
+        "pi0": r"\pi^0",
         "e+": r"e^+",
         "e-": r"e^-",
         "Xibar+": r"\bar{\Xi}^+",
@@ -99,6 +102,11 @@ def get_particle_tex_name(
         "n": r"n",
         "K+": r"K^+",
         "K-": r"K^-",
+        "Sigma+": r"\Sigma^+",
+        "Sigma-": r"\Sigma^-",
+        "Sigma0": r"\Sigma^0",
+        "Sigmabar-": r"\bar{\Sigma}^-",
+        "Sigmabar+": r"\bar{\Sigma}^+",
     }
 
     # Check if the particle ID is 8888 belonging to the ppbar system
@@ -108,8 +116,11 @@ def get_particle_tex_name(
     elif len(str(pdg_id)) == 10:
         return "nucleus"
     # Else return the latex representation of the particle name
-    else:
+    elif pdg_api.get_particle_by_mcid(str(pdg_id)).name in particle_tex_names:
         return particle_tex_names[pdg_api.get_particle_by_mcid(str(pdg_id)).name]
+    else:
+        logging.warning(f"No latex conversion for PDG ID: {pdg_id}")
+        return pdg_api.get_particle_by_mcid(str(pdg_id)).name
 
 
 def get_all_mother_ids(
