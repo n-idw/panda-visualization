@@ -1,19 +1,14 @@
-# python IO for ROOT files
 import uproot
-
-from tqdm.contrib.concurrent import process_map
-
-# numpy
-import numpy as np
-
-import awkward as ak
 import yaml
 import math
 import os
+import logging
+import argparse
+import numpy as np
+import awkward as ak
 
-
+from tqdm.contrib.concurrent import process_map
 from functools import partial
-
 from utils.data_processing import (
     get_all_mother_ids,
     get_process_ids,
@@ -22,13 +17,23 @@ from utils.data_processing import (
     get_particle_tex_name,
 )
 
-import logging
-import argparse
-
 
 def process_row(
     row: ak.Array, signal_mc_ids: list[list[int]], signal_process_codes: list[list[int]]
 ) -> ak.Array:
+    """
+    Extract and process data of particles leaving hits in the STT for a single event / row in the simulation ROOT file.
+
+    Args:
+        row (ak.Array): Array with the data of a single event / row in the simulation ROOT file.
+        signal_mc_ids (list[list[int]]): List of lists containing the PDG MC IDs of a signal particle and all its mother particles
+                                         in order of the full process.
+        signal_process_codes (list[list[int]]): List of lists containing the VMC process codes of a signal particle and all its mother particles
+                                                in order of the full process.
+
+    Returns:
+        ak.Array: Array containing the processed data of the particles leaving a signal in the STT.
+    """
 
     # Dictionary containing the processed data of the row.
     output_dict = {}
@@ -212,6 +217,7 @@ def main() -> None:
     # Read the "pndsim" TTree from the input ROOT file using uproot.
     sim_tree = uproot.open(
         command_line_args.input_file + ":pndsim",
+        num_workers=command_line_args.num_cpus,
     )
 
     # Get the total number of entries in the simulation tree.
