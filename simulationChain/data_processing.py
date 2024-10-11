@@ -91,26 +91,26 @@ def process_row(
             + "$"
         )
 
-        # Calculate the transverse momentum.
-        output_dict["pt"] = np.sqrt(
-            output_dict["MCTrack.fPx"] ** 2 + output_dict["MCTrack.fPy"] ** 2
-        )
-        # Calculate the absolute momentum.
-        output_dict["P"] = np.sqrt(
-            output_dict["MCTrack.fPx"] ** 2
-            + output_dict["MCTrack.fPy"] ** 2
-            + output_dict["MCTrack.fPz"] ** 2
-        )
-        # Calculate the polar angle theta.
-        output_dict["theta"] = np.arctan2(output_dict["pt"], output_dict["MCTrack.fPz"])
-        # Calculate the azimuthal angle phi.
-        output_dict["phi"] = np.arctan2(
-            output_dict["MCTrack.fPy"], output_dict["MCTrack.fPx"]
-        )
-        # Calculate the pseudorapidity eta.
-        output_dict["eta"] = -np.log(np.tan(output_dict["theta"] / 2))
-
         particle_num += 1
+
+    # Calculate the transverse momentum.
+    output_dict["pt"] = np.sqrt(
+        output_dict["MCTrack.fPx"] ** 2 + output_dict["MCTrack.fPy"] ** 2
+    )
+    # Calculate the absolute momentum.
+    output_dict["P"] = np.sqrt(
+        output_dict["MCTrack.fPx"] ** 2
+        + output_dict["MCTrack.fPy"] ** 2
+        + output_dict["MCTrack.fPz"] ** 2
+    )
+    # Calculate the polar angle theta.
+    output_dict["theta"] = np.arctan2(output_dict["pt"], output_dict["MCTrack.fPz"])
+    # Calculate the azimuthal angle phi.
+    output_dict["phi"] = np.arctan2(
+        output_dict["MCTrack.fPy"], output_dict["MCTrack.fPx"]
+    )
+    # Calculate the pseudorapidity eta.
+    output_dict["eta"] = -np.log(np.tan(output_dict["theta"] / 2))
 
     # Return the output dictionary as an awkward array.
     return ak.Array(output_dict)
