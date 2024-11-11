@@ -56,7 +56,7 @@ def plot_stt(useGrayScale=False, alpha=1):
     # Set the general style of the plot using seaborn
     sns.set_theme()
     sns.set_style("ticks")
-    sns.set_context("notebook")
+    sns.set_context("talk")
 
     pipeColors = sns.color_palette("pastel")
 
@@ -80,6 +80,7 @@ def plot_stt(useGrayScale=False, alpha=1):
         fc="none",
         s=20,
         alpha=alpha,
+        lw=1,
     )
     # Plot the negative skewed tubes
     ax.scatter(
@@ -89,6 +90,7 @@ def plot_stt(useGrayScale=False, alpha=1):
         fc="none",
         s=20,
         alpha=alpha,
+        lw=1,
     )
     # Plot the straight tubes
     ax.scatter(
@@ -98,6 +100,7 @@ def plot_stt(useGrayScale=False, alpha=1):
         fc="none",
         s=20,
         alpha=alpha,
+        lw=1,
     )
 
     # Format the axes
@@ -105,7 +108,5 @@ def plot_stt(useGrayScale=False, alpha=1):
     ax.set_ylabel("y [cm]")
     ax.set_aspect("equal")
     sns.despine(fig=fig, ax=ax, offset=10, trim=True)
-
-    fig.tight_layout()
 
     return fig, ax
