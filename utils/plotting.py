@@ -3,6 +3,12 @@ import seaborn as sns
 import pandas as pd
 from matplotlib import transforms
 from matplotlib import patches
+from matplotlib.figure import Figure
+from matplotlib.axes import Axes
+from matplotlib.patches import Circle
+from typing import Tuple
+
+from utils.data_processing import get_particle_tex_name
 
 
 def create_rotated_cross(
@@ -38,7 +44,7 @@ def create_rotated_cross(
     ax.add_patch(cross)
 
 
-def plot_stt(useGrayScale=False, alpha=1):
+def plot_stt(useGrayScale=False, alpha=1) -> Tuple[Figure, Axes]:
 
     # import the STT geometry data
     sttGeo = pd.read_csv(
@@ -110,3 +116,75 @@ def plot_stt(useGrayScale=False, alpha=1):
     sns.despine(fig=fig, ax=ax, offset=10, trim=True)
 
     return fig, ax
+
+
+def plot_isochrones(
+    x,
+    y,
+    isochrones,
+    hid,
+    color="k",
+    line_width=1.,
+) -> Tuple[list, list]:
+
+    # Prepare lists for the isochrone circles and the legend handles
+    isochrone_circles = []
+
+    for hit in hid:
+        isochrone_circles.append(
+            Circle(
+                (x[hit], y[hit]),
+                isochrones[hit],
+                ec=color,
+                lw=line_width,
+                fc="None",
+            )
+        )
+
+    return isochrone_circles
+
+
+def plot_isochrones_with_pid(
+    x,
+    y,
+    isochrones,
+    hid,
+    pids,
+    unique_pids,
+    pdg_codes,
+    pid_color_palette,
+    line_width=1.,
+) -> Tuple[list, list]:
+
+    # Prepare lists for the isochrone circles and the legend handles
+    isochrone_circles = []
+    legend_handles = []
+
+    particle_num = 0
+    for pid in unique_pids:
+        pid_mask = pids == pid
+        particle_hid = hid[pid_mask]
+        for hit in particle_hid:
+            isochrone_circles.append(
+                Circle(
+                    (x[hit], y[hit]),
+                    isochrones[hit],
+                    ec=pid_color_palette[particle_num],
+                    lw=line_width,
+                    fc="None",
+                )
+            )
+        legend_handles.append(
+            plt.scatter(
+                0,
+                0,
+                ec=pid_color_palette[particle_num],
+                lw=line_width,
+                fc="None",
+                label=f"${get_particle_tex_name(pdg_codes[pid_mask][0].item())}_{{{pid:.0f}}}$",
+            )
+        )
+        plt.close("all")
+        particle_num += 1
+
+    return isochrone_circles, legend_handles
