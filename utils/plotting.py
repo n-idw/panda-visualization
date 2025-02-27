@@ -118,13 +118,75 @@ def plot_stt(useGrayScale=False, alpha=1) -> Tuple[Figure, Axes]:
     return fig, ax
 
 
+def plot_stt_on_ax(ax, useGrayScale=False, alpha=1) -> Tuple[Figure, Axes]:
+
+    # import the STT geometry data
+    sttGeo = pd.read_csv(
+        "/home/nikin105/mlProject/data/detectorGeometries/tubePos.csv",
+        usecols=["x", "y", "skewed"],
+    )
+
+    posSkewedTubes = sttGeo.query("skewed == 1")
+    negSkewedTubes = sttGeo.query("skewed == -1")
+    straightTubes = sttGeo.query("skewed == 0")
+
+    pipeColors = sns.color_palette("pastel")
+
+    if useGrayScale:
+        posSkewedColor = pipeColors[7]
+        negSkewedColor = pipeColors[7]
+        straightColor = pipeColors[7]
+    else:
+        posSkewedColor = pipeColors[3]
+        negSkewedColor = pipeColors[0]
+        straightColor = pipeColors[2]
+
+    # Plot the positive skewed tubes
+    ax.scatter(
+        posSkewedTubes["x"],
+        posSkewedTubes["y"],
+        ec=posSkewedColor,
+        fc="none",
+        s=20,
+        alpha=alpha,
+        lw=1,
+    )
+    # Plot the negative skewed tubes
+    ax.scatter(
+        negSkewedTubes["x"],
+        negSkewedTubes["y"],
+        ec=negSkewedColor,
+        fc="none",
+        s=20,
+        alpha=alpha,
+        lw=1,
+    )
+    # Plot the straight tubes
+    ax.scatter(
+        straightTubes["x"],
+        straightTubes["y"],
+        ec=straightColor,
+        fc="none",
+        s=20,
+        alpha=alpha,
+        lw=1,
+    )
+
+    # Format the axes
+    ax.set_xlabel("x [cm]")
+    ax.set_ylabel("y [cm]")
+    ax.set_aspect("equal")
+
+    return None
+
+
 def plot_isochrones(
     x,
     y,
     isochrones,
     hid,
     color="k",
-    line_width=1.,
+    line_width=1.0,
 ) -> Tuple[list, list]:
 
     # Prepare lists for the isochrone circles and the legend handles
@@ -153,7 +215,7 @@ def plot_isochrones_with_pid(
     unique_pids,
     pdg_codes,
     pid_color_palette,
-    line_width=1.,
+    line_width=1.0,
 ) -> Tuple[list, list]:
 
     # Prepare lists for the isochrone circles and the legend handles
