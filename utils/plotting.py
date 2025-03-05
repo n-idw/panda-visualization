@@ -1,11 +1,12 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+import numpy as np
 from matplotlib import transforms
 from matplotlib import patches
 from matplotlib.figure import Figure
 from matplotlib.axes import Axes
-from matplotlib.patches import Circle
+from matplotlib.patches import Circle, Wedge
 from typing import Tuple
 
 from utils.data_processing import get_particle_tex_name
@@ -210,43 +211,65 @@ def plot_isochrones_with_pid(
     x,
     y,
     isochrones,
+    n_multi_hits,
+    multi_hit_pids,
     hid,
     pids,
     unique_pids,
     pdg_codes,
     pid_color_palette,
-    line_width=1.0,
+    line_width=0.15,
 ) -> Tuple[list, list]:
 
     # Prepare lists for the isochrone circles and the legend handles
     isochrone_circles = []
     legend_handles = []
 
-    particle_num = 0
-    for pid in unique_pids:
+    for particle_num, pid in enumerate(unique_pids):
         pid_mask = pids == pid
         particle_hid = hid[pid_mask]
         for hit in particle_hid:
-            isochrone_circles.append(
-                Circle(
-                    (x[hit], y[hit]),
-                    isochrones[hit],
-                    ec=pid_color_palette[particle_num],
-                    lw=line_width,
-                    fc="None",
+            if n_multi_hits[hit] > 1:
+                pids_in_hit = multi_hit_pids[hit].strip()
+                pids_in_hit = [int(s.strip()) for s in pids_in_hit.split(",")]
+                angle_per_wedge = 360 / len(pids_in_hit)
+                for i, pid_in_hit in enumerate(pids_in_hit):
+                    isochrone_circles.append(
+                        Wedge(
+                            (x[hit], y[hit]),
+                            isochrones[hit].item(),
+                            angle_per_wedge * i,
+                            angle_per_wedge * (i + 1),
+                            fc=pid_color_palette[
+                                np.where(unique_pids == pid_in_hit)[0][0]
+                            ],
+                            width=line_width,
+                            lw=0.5,
+                            ec="white",
+                        )
+                    )
+            else:
+                isochrone_circles.append(
+                    Wedge(
+                        (x[hit], y[hit]),
+                        isochrones[hit].item(),
+                        0,
+                        360,
+                        fc=pid_color_palette[particle_num],
+                        width=line_width,
+                        lw=0.5,
+                        ec="white",
+                    )
                 )
-            )
         legend_handles.append(
             plt.scatter(
                 0,
                 0,
                 ec=pid_color_palette[particle_num],
-                lw=line_width,
                 fc="None",
                 label=f"${get_particle_tex_name(pdg_codes[pid_mask][0].item())}_{{{pid:.0f}}}$",
             )
         )
         plt.close("all")
-        particle_num += 1
 
     return isochrone_circles, legend_handles
