@@ -230,8 +230,7 @@ def plot_isochrones_with_pid(
         particle_hid = hid[pid_mask]
         for hit in particle_hid:
             if n_multi_hits[hit] > 1:
-                pids_in_hit = multi_hit_pids[hit].strip()
-                pids_in_hit = [int(s.strip()) for s in pids_in_hit.split(",")]
+                pids_in_hit = multi_hit_pids[hit]
                 angle_per_wedge = 360 / len(pids_in_hit)
                 for i, pid_in_hit in enumerate(pids_in_hit):
                     isochrone_circles.append(
