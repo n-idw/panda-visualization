@@ -5,11 +5,11 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 from matplotlib.ticker import AutoMinorLocator
 import itertools
 
-fontsize = 22
-minor_size = 16
+sns.set_theme(style="whitegrid", context="talk")
 
 # pt params
 pt_bins = np.linspace(0.1, 1.5, num=15)  # will give 15 bins
